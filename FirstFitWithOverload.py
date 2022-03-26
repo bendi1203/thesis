@@ -7,19 +7,20 @@ path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
 os.chdir(path)
 
 
-#   törlendő
 def read_text(fpath):
     with open(fpath, 'r') as f:
-        print(f.read())
+        # print(f.read(), 'NEVE: ', fpath)
+        data = [file.split() for file in f]
+        print("data hossza", len(data))
+        print(data)
 
-
-#   törlendő
 
 for file in os.listdir():
     if file.endswith('.BPP'):
         fpath = f"{path}\{file}"
-        read_text(fpath)  # törlendő
-        print('---')  # törlendő
+        read_text(fpath)
+        print('melyik file: ', file)
+        print('---')
 
 
 def overload(c):
