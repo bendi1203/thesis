@@ -9,18 +9,15 @@ os.chdir(path)
 
 def read_text(fpath):
     with open(fpath, 'r') as f:
-        # print(f.read(), 'NEVE: ', fpath)
         data = [file.split() for file in f]
-        print("data hossza", len(data))
-        print(data)
+        dataInt = [list( map(int,i) ) for i in data]
 
 
 for file in os.listdir():
     if file.endswith('.BPP'):
         fpath = f"{path}\{file}"
         read_text(fpath)
-        print('melyik file: ', file)
-        print('---')
+
 
 
 def overload(c):
