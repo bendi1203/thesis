@@ -1,18 +1,22 @@
 import sys
 import os
 
+#worst fit.et megirni, best fitet megézni (nem esélyes), harmonic fit szerűséget írni (3 - 4 osztályra)
+
+
+#új könyvtár kell, ha nem találok: akkor overload nélkülihez hasonlítani
 path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
 os.chdir(path)
 
 cost = 2
 
-
+# minden ágon végigmenni különböző c -vel
 def overload(c):
     if (0 <= c) and (c <= 3 / 2):
         s = 1 + sys.maxsize
 
     elif (3 / 2 <= c) and (c <= 9 / 5):
-        s = 1 + 1 / c
+        s = 1 + (1 / c)
         print('overload')
 
     elif (9 / 5 <= c) and (c <= 14 / 3):
@@ -51,8 +55,10 @@ def firstFit(overloadCost, data):
 
 
 def read_text(fpath):
+    i = 0
     with open(fpath, 'r') as f:
-        f.readline()
+        numberOfItems = f.readline()
+        binCapacity = f.readline()
         data = f.readlines()
         dataInt = []
         for i in range(len(data)):
