@@ -72,7 +72,7 @@ for file in os.listdir():
         fpath = f"{path}\{file}"
         read_text(fpath)
 
-# print("Használt ládák száma: ", firstFit([1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1], 10, 2))
+# print("Használt ládák száma: ", firstFit( 1.17,[1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]))
 
 # h: rekeszek száma
 # wi: i-edik rekesznek a magassága (a benne lévő dobozok összemagassága)
