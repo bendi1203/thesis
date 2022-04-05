@@ -1,8 +1,7 @@
 import sys
 import os
 
-#worst fit.et megirni, best fitet megézni (nem esélyes), harmonic fit szerűséget írni (3 - 4 osztályra)
-
+#Harmonic fit szerűséget írni (3 - 4 osztályra)
 
 #új könyvtár kell, ha nem találok: akkor overload nélkülihez hasonlítani
 path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
@@ -17,7 +16,6 @@ def overload(c):
 
     elif (3 / 2 <= c) and (c <= 9 / 5):
         s = 1 + (1 / c)
-        print('overload')
 
     elif (9 / 5 <= c) and (c <= 14 / 3):
         s = 1 + 2 / (3 * c)
@@ -26,7 +24,6 @@ def overload(c):
         s = 1 + 1 / (3 * c)
     return s * 100
 
-
 def firstFitForOneItem(bins, remainingSpace, item, maxHeight):
     j = 0
     while j < bins:
@@ -34,13 +31,12 @@ def firstFitForOneItem(bins, remainingSpace, item, maxHeight):
             remainingSpace[j] -= item
             break
         j += 1
-        if j == bins:
-            remainingSpace.append(maxHeight - item)
-            bins += 1
-            break
+    if j == bins:
+        remainingSpace.append(maxHeight - item)
+        bins += 1
+
     # print(bins)
     return bins
-
 
 def firstFit(overloadCost, data):
     usedBins = 1
@@ -51,8 +47,64 @@ def firstFit(overloadCost, data):
     for i in range(len(data)):
         usedBins = firstFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
 
-    return usedBins - 1
+    return usedBins
 
+def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
+    j = 0
+    minIndex = -1
+    min = sys.maxsize
+    while j < bins:
+        if remainingSpace[j] >= item:
+            if min > remainingSpace[j] - item:
+                min = remainingSpace[j] - item
+                minIndex = j
+        j += 1
+
+    if minIndex != -1:
+        remainingSpace[minIndex] = min
+    else:
+        remainingSpace.append(maxHeight - item)
+        bins += 1
+    return bins
+
+def bestFit(overloadCost, data):
+    usedBins = 1
+    maxHeight = overload(overloadCost)
+    remainingSpace = []
+    remainingSpace.append(maxHeight)
+
+    for i in range(len(data)):
+        usedBins = bestFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
+
+    return usedBins
+
+def worstFitForOneItem(bins, remainingSpace, item, maxHeight):
+    j = 0
+    minIndex = 0
+    min = sys.maxsize
+    while j < bins:
+        if maxHeight - remainingSpace[j] < min:
+            min = maxHeight - remainingSpace[j]
+            minIndex = j
+        j += 1
+
+    if remainingSpace[minIndex] >= item:
+        remainingSpace[minIndex] -= item
+    else:
+        remainingSpace.append(maxHeight - item)
+        bins += 1
+    return bins
+
+def worstFit(overloadCost, data):
+    usedBins = 1
+    maxHeight = overload(overloadCost)
+    remainingSpace = []
+    remainingSpace.append(maxHeight)
+
+    for i in range(len(data)):
+        usedBins = worstFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
+
+    return usedBins
 
 def read_text(fpath):
     i = 0
@@ -63,9 +115,10 @@ def read_text(fpath):
         dataInt = []
         for i in range(len(data)):
             dataInt.append(int(data[i]))
-        result = firstFit(cost, dataInt)
-        print(result)
-
+        resultFirstFit = firstFit(cost, dataInt)
+        resultBestFit = bestFit(cost, dataInt)
+        resultWorstFit = worstFit(cost, dataInt)
+        print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
 
 for file in os.listdir():
     if file.endswith('.BPP'):
