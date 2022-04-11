@@ -3,11 +3,14 @@ import os
 
 #Harmonic fit szerűséget írni (3 - 4 osztályra)
 
-#új könyvtár kell, ha nem találok: akkor overload nélkülihez hasonlítani
+# optimumhoz hasonlítani a kimenetet, átlag stb., m* értékvel osztani a megoldást -> külön külön algoritmusra: átlag, legnagyobb érték, legkisebb, összehasonlítások
+# c értékeket grafikonon ábrázolni
+#bináris kereséssel keresni -> eddig pakolt ládákat rendezni vmilyen sorrendbe -> felező keresés
+#bemenetet ritkítani 10-10 darab (min 100db)
 path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
 os.chdir(path)
 
-cost = 2
+cost = 2  # 1 -3 kb. 0.1-es osztással
 
 # minden ágon végigmenni különböző c -vel
 def overload(c):
