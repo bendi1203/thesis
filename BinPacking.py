@@ -19,8 +19,6 @@ import numpy as np
 path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
 os.chdir(path)
 
-cost = 2  # 1 -3 kb. 0.1-es osztással
-
 # minden ágon végigmenni különböző c -vel
 def overload(c):
     if (0 <= c) and (c <= 3 / 2):
@@ -131,11 +129,29 @@ def read_text(fpath, x):
         resultWorstFit = worstFit(maxHeight, dataInt)
         print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
 
+def readOptimal(fpath):
+    with open(fpath, 'r') as f:
+        optimals = []
+        a = True
+        while a:
+            line = f.readline()
+            if(not line):
+                a = False
+                break
+            v = line.split(sep="\t")
+            optimals.append(v[1])
+            optimals.append(v[3])
+            optimals.append(v[5])
+        print(optimals)
+
 def readDirectory(x):
     for file in os.listdir():
         if file.endswith('.BPP'):
             fpath = f"{path}\{file}"
             read_text(fpath, x)
+        if file.endswith('.TXT'):
+            fpath = f"{path}\{file}"
+            readOptimal(fpath)
 
 for x in np.linspace(1,3,3):
     readDirectory(x)
