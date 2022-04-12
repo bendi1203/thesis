@@ -1,0 +1,2 @@
+1. A dokumentációban leírt PSEUDO kódnak megfelel-e az általam írt Python kód?
+2. 12. oldal BestFit és 13. oldal Worst Fit részekhez meg van a rövid leírásom, ide is kellene egy túltöltéses példát írnom a FirstFithez hasonlóan?

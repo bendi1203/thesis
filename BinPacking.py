@@ -1,12 +1,21 @@
 import sys
 import os
+import numpy as np
 
 #Harmonic fit szerűséget írni (3 - 4 osztályra)
 
 # optimumhoz hasonlítani a kimenetet, átlag stb., m* értékvel osztani a megoldást -> külön külön algoritmusra: átlag, legnagyobb érték, legkisebb, összehasonlítások
+
 # c értékeket grafikonon ábrázolni
+
 #bináris kereséssel keresni -> eddig pakolt ládákat rendezni vmilyen sorrendbe -> felező keresés
+
 #bemenetet ritkítani 10-10 darab (min 100db)
+
+#optimal beolvasása, szótárba(?) rendezése
+
+#elérési útvonalak beállítása, hogy máshol is működjön
+
 path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
 os.chdir(path)
 
@@ -15,7 +24,8 @@ cost = 2  # 1 -3 kb. 0.1-es osztással
 # minden ágon végigmenni különböző c -vel
 def overload(c):
     if (0 <= c) and (c <= 3 / 2):
-        s = 1 + sys.maxsize
+        s = sys.maxsize - 2
+        return s
 
     elif (3 / 2 <= c) and (c <= 9 / 5):
         s = 1 + (1 / c)
@@ -41,9 +51,8 @@ def firstFitForOneItem(bins, remainingSpace, item, maxHeight):
     # print(bins)
     return bins
 
-def firstFit(overloadCost, data):
+def firstFit(maxHeight, data):
     usedBins = 1
-    maxHeight = overload(overloadCost)
     remainingSpace = []
     remainingSpace.append(maxHeight)
 
@@ -55,7 +64,7 @@ def firstFit(overloadCost, data):
 def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
     j = 0
     minIndex = -1
-    min = sys.maxsize
+    min = sys.maxsize - 1
     while j < bins:
         if remainingSpace[j] >= item:
             if min > remainingSpace[j] - item:
@@ -70,9 +79,8 @@ def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
         bins += 1
     return bins
 
-def bestFit(overloadCost, data):
+def bestFit(maxHeight, data):
     usedBins = 1
-    maxHeight = overload(overloadCost)
     remainingSpace = []
     remainingSpace.append(maxHeight)
 
@@ -98,9 +106,8 @@ def worstFitForOneItem(bins, remainingSpace, item, maxHeight):
         bins += 1
     return bins
 
-def worstFit(overloadCost, data):
+def worstFit(maxHeight, data):
     usedBins = 1
-    maxHeight = overload(overloadCost)
     remainingSpace = []
     remainingSpace.append(maxHeight)
 
@@ -109,8 +116,9 @@ def worstFit(overloadCost, data):
 
     return usedBins
 
-def read_text(fpath):
+def read_text(fpath, x):
     i = 0
+    maxHeight = overload(x)
     with open(fpath, 'r') as f:
         numberOfItems = f.readline()
         binCapacity = f.readline()
@@ -118,21 +126,16 @@ def read_text(fpath):
         dataInt = []
         for i in range(len(data)):
             dataInt.append(int(data[i]))
-        resultFirstFit = firstFit(cost, dataInt)
-        resultBestFit = bestFit(cost, dataInt)
-        resultWorstFit = worstFit(cost, dataInt)
+        resultFirstFit = firstFit(maxHeight, dataInt)
+        resultBestFit = bestFit(maxHeight, dataInt)
+        resultWorstFit = worstFit(maxHeight, dataInt)
         print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
 
-for file in os.listdir():
-    if file.endswith('.BPP'):
-        fpath = f"{path}\{file}"
-        read_text(fpath)
+def readDirectory(x):
+    for file in os.listdir():
+        if file.endswith('.BPP'):
+            fpath = f"{path}\{file}"
+            read_text(fpath, x)
 
-# print("Használt ládák száma: ", firstFit( 1.17,[1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]))
-
-# h: rekeszek száma
-# wi: i-edik rekesznek a magassága (a benne lévő dobozok összemagassága)
-# si: i-edik rekesznek a max magassága (ameddig pakolhatjuk a ládákat)
-# pi: i-edik doboznak a magassága
-# dj: j-edik rekesznek a fennmaradó része (ha oda raknánk be az i-edik dobozt)
-# k: eredmény (result)
+for x in np.linspace(1,3,3):
+    readDirectory(x)
