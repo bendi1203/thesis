@@ -132,24 +132,28 @@ def read_text(fpath, x):
 def readOptimal(fpath):
     with open(fpath, 'r') as f:
         optimals = []
+        optimalsInt = []
         a = True
         while a:
             line = f.readline()
             if(not line):
                 a = False
                 break
-            v = line.split(sep="\t")
+            v = line.split(sep=";") #\t
             optimals.append(v[1])
             optimals.append(v[3])
             optimals.append(v[5])
-        print(optimals)
+        for i in range(len(optimals)):
+            optimalsInt.append(int(optimals[i]))
+        print(optimalsInt)
 
 def readDirectory(x):
     for file in os.listdir():
         if file.endswith('.BPP'):
             fpath = f"{path}\{file}"
             read_text(fpath, x)
-        if file.endswith('.TXT'):
+
+        elif file.endswith('.csv'):
             fpath = f"{path}\{file}"
             readOptimal(fpath)
 
