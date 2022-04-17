@@ -146,6 +146,7 @@ def readOptimal(fpath):
         for i in range(len(optimals)):
             optimalsInt.append(int(optimals[i]))
         print(optimalsInt)
+        return optimalsInt
 
 def readDirectory(x):
     for file in os.listdir():
@@ -159,3 +160,4 @@ def readDirectory(x):
 
 for x in np.linspace(1,3,3):
     readDirectory(x)
+
