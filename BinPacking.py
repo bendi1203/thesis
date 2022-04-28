@@ -1,25 +1,20 @@
 import sys
 import os
 import numpy as np
-
-#Harmonic fit szerűséget írni (3 - 4 osztályra)
+import matplotlib.pyplot as plt
+import math
 
 # optimumhoz hasonlítani a kimenetet, átlag stb., m* értékvel osztani a megoldást -> külön külön algoritmusra: átlag, legnagyobb érték, legkisebb, összehasonlítások
-
-# c értékeket grafikonon ábrázolni
 
 #bináris kereséssel keresni -> eddig pakolt ládákat rendezni vmilyen sorrendbe -> felező keresés
 
 #bemenetet ritkítani 10-10 darab (min 100db)
-
-#optimal beolvasása, szótárba(?) rendezése
 
 #elérési útvonalak beállítása, hogy máshol is működjön
 
 path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
 os.chdir(path)
 
-# minden ágon végigmenni különböző c -vel
 def overload(c):
     if (0 <= c) and (c <= 3 / 2):
         s = sys.maxsize - 2
@@ -35,51 +30,73 @@ def overload(c):
         s = 1 + 1 / (3 * c)
     return s * 100
 
-def firstFitForOneItem(bins, remainingSpace, item, maxHeight):
-    j = 0
-    while j < bins:
-        if remainingSpace[j] >= item:
-            remainingSpace[j] -= item
-            break
-        j += 1
-    if j == bins:
-        remainingSpace.append(maxHeight - item)
-        bins += 1
+def binary(remainingSpace, toInsert):
+    a = 0
+    b = len(remainingSpace) - 1 #utolsó eleme a listának
+    while a <= b: #elsőben a legkisebb maradék hely és a végén a legtöbb
+        if remainingSpace[math.floor((a + b) / 2)] > toInsert: #első fele
+            b = math.floor((a + b) / 2) - 1
+        else: #második fele
+            a = math.floor((a + b) / 2) + 1
+    remainingSpace.insert(a, toInsert)
 
-    # print(bins)
+def firstFitForOneItem(bins, remainingSpace, item, maxHeight):
+    a = 0
+    b = len(remainingSpace) - 1  # utolsó eleme a listának
+    while a <= b:  # elsőben a legkisebb maradék hely és a végén a legtöbb
+        if remainingSpace[math.floor((a + b) / 2)] >= item:
+            toInsert = remainingSpace[math.floor((a + b) / 2)] - item
+            del remainingSpace[math.floor((a + b) / 2)]
+            binary(remainingSpace, toInsert)
+            return bins
+        else:  # második fele
+            a = math.floor((a + b) / 2) + 1
+    remainingSpace.append(maxHeight - item)
+    bins += 1
+    toInsert = remainingSpace[len(remainingSpace) - 1]
+    del remainingSpace[len(remainingSpace) - 1]
+    binary(remainingSpace, toInsert)
     return bins
 
 def firstFit(maxHeight, data):
     usedBins = 1
     remainingSpace = []
     remainingSpace.append(maxHeight)
-
+    remainingSpace.append(maxHeight)
     for i in range(len(data)):
         usedBins = firstFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
 
     return usedBins
 
 def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
-    j = 0
+    a = 0
+    b = len(remainingSpace) - 1  # utolsó eleme a listának
     minIndex = -1
     min = sys.maxsize - 1
-    while j < bins:
-        if remainingSpace[j] >= item:
-            if min > remainingSpace[j] - item:
-                min = remainingSpace[j] - item
-                minIndex = j
-        j += 1
-
+    while a <= b:  # elsőben a legkisebb maradék hely és a végén a legtöbb
+        if remainingSpace[math.floor((a + b) / 2)] >= item:
+            if min > remainingSpace[math.floor((a + b) / 2)] - item:
+                min = remainingSpace[math.floor((a + b) / 2)] - item
+                minIndex = math.floor((a + b) / 2)
+            b = math.floor((a + b) / 2) - 1
+        else:  # második fele
+            a = math.floor((a + b) / 2) + 1
+            print(a <= b)
     if minIndex != -1:
-        remainingSpace[minIndex] = min
+        del remainingSpace[minIndex]
+        binary(remainingSpace, min)
     else:
         remainingSpace.append(maxHeight - item)
         bins += 1
+        toInsert = remainingSpace[len(remainingSpace) - 1]
+        del remainingSpace[len(remainingSpace) - 1]
+        binary(remainingSpace, toInsert)
     return bins
 
 def bestFit(maxHeight, data):
     usedBins = 1
     remainingSpace = []
+    remainingSpace.append(maxHeight)
     remainingSpace.append(maxHeight)
 
     for i in range(len(data)):
@@ -88,25 +105,23 @@ def bestFit(maxHeight, data):
     return usedBins
 
 def worstFitForOneItem(bins, remainingSpace, item, maxHeight):
-    j = 0
-    minIndex = 0
-    min = sys.maxsize
-    while j < bins:
-        if maxHeight - remainingSpace[j] < min:
-            min = maxHeight - remainingSpace[j]
-            minIndex = j
-        j += 1
-
-    if remainingSpace[minIndex] >= item:
-        remainingSpace[minIndex] -= item
+    if remainingSpace[len(remainingSpace) - 1] - item > 0:
+        toInsert = remainingSpace[len(remainingSpace) - 1] - item
+        del remainingSpace[len(remainingSpace) - 1]
+        binary(remainingSpace, toInsert)
     else:
         remainingSpace.append(maxHeight - item)
         bins += 1
+        toInsert = remainingSpace[len(remainingSpace) - 1]
+        del remainingSpace[len(remainingSpace) - 1]
+        binary(remainingSpace, toInsert)
+
     return bins
 
 def worstFit(maxHeight, data):
     usedBins = 1
     remainingSpace = []
+    remainingSpace.append(maxHeight)
     remainingSpace.append(maxHeight)
 
     for i in range(len(data)):
@@ -145,7 +160,6 @@ def readOptimal(fpath):
             optimals.append(v[5])
         for i in range(len(optimals)):
             optimalsInt.append(int(optimals[i]))
-        print(optimalsInt)
         return optimalsInt
 
 def readDirectory(x):
