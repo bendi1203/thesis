@@ -1,16 +1,8 @@
 import sys
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 import math
 
-# optimumhoz hasonlítani a kimenetet, átlag stb., m* értékvel osztani a megoldást -> külön külön algoritmusra: átlag, legnagyobb érték, legkisebb, összehasonlítások
-
-#bináris kereséssel keresni -> eddig pakolt ládákat rendezni vmilyen sorrendbe -> felező keresés
-
-#bemenetet ritkítani 10-10 darab (min 100db)
-
-#elérési útvonalak beállítása, hogy máshol is működjön
 
 path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
 os.chdir(path)
@@ -81,7 +73,6 @@ def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
             b = math.floor((a + b) / 2) - 1
         else:  # második fele
             a = math.floor((a + b) / 2) + 1
-            print(a <= b)
     if minIndex != -1:
         del remainingSpace[minIndex]
         binary(remainingSpace, min)
