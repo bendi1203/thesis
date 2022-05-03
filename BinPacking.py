@@ -3,6 +3,7 @@ import os
 import numpy as np
 import math
 
+from matplotlib import pyplot as plt
 
 path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
 os.chdir(path)
@@ -89,7 +90,6 @@ def bestFit(maxHeight, data):
     remainingSpace = []
     remainingSpace.append(maxHeight)
     remainingSpace.append(maxHeight)
-
     for i in range(len(data)):
         usedBins = bestFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
 
@@ -114,7 +114,6 @@ def worstFit(maxHeight, data):
     remainingSpace = []
     remainingSpace.append(maxHeight)
     remainingSpace.append(maxHeight)
-
     for i in range(len(data)):
         usedBins = worstFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
 
@@ -124,8 +123,8 @@ def read_text(fpath, x):
     i = 0
     maxHeight = overload(x)
     with open(fpath, 'r') as f:
-        numberOfItems = f.readline()
-        binCapacity = f.readline()
+        f.readline()
+        f.readline()
         data = f.readlines()
         dataInt = []
         for i in range(len(data)):
@@ -134,6 +133,7 @@ def read_text(fpath, x):
         resultBestFit = bestFit(maxHeight, dataInt)
         resultWorstFit = worstFit(maxHeight, dataInt)
         print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
+        return [resultFirstFit, resultBestFit, resultWorstFit] #egy listába rakja
 
 def readOptimal(fpath):
     with open(fpath, 'r') as f:
@@ -154,14 +154,25 @@ def readOptimal(fpath):
         return optimalsInt
 
 def readDirectory(x):
+    firstFitList = []
+    bestFitList = []
+    worstFitList = []
     for file in os.listdir():
         if file.endswith('.BPP'):
             fpath = f"{path}\{file}"
-            read_text(fpath, x)
+            data = read_text(fpath, x)
+            firstFitList.append(data[0])
+            bestFitList.append(data[1])
+            worstFitList.append(data[2])
 
         elif file.endswith('.csv'):
             fpath = f"{path}\{file}"
             readOptimal(fpath)
+
+    plt.plot(firstFitList)
+    plt.plot(bestFitList)
+    plt.plot(worstFitList)
+    plt.show()
 
 for x in np.linspace(1,3,3):
     readDirectory(x)
