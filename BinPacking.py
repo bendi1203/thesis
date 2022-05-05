@@ -25,24 +25,24 @@ def overload(c):
 
 def binary(remainingSpace, toInsert):
     a = 0
-    b = len(remainingSpace) - 1 #utolsó eleme a listának
-    while a <= b: #elsőben a legkisebb maradék hely és a végén a legtöbb
-        if remainingSpace[math.floor((a + b) / 2)] > toInsert: #első fele
+    b = len(remainingSpace) - 1
+    while a <= b:
+        if remainingSpace[math.floor((a + b) / 2)] > toInsert:
             b = math.floor((a + b) / 2) - 1
-        else: #második fele
+        else:
             a = math.floor((a + b) / 2) + 1
     remainingSpace.insert(a, toInsert)
 
 def firstFitForOneItem(bins, remainingSpace, item, maxHeight):
     a = 0
-    b = len(remainingSpace) - 1  # utolsó eleme a listának
-    while a <= b:  # elsőben a legkisebb maradék hely és a végén a legtöbb
+    b = len(remainingSpace) - 1
+    while a <= b:
         if remainingSpace[math.floor((a + b) / 2)] >= item:
             toInsert = remainingSpace[math.floor((a + b) / 2)] - item
             del remainingSpace[math.floor((a + b) / 2)]
             binary(remainingSpace, toInsert)
             return bins
-        else:  # második fele
+        else:
             a = math.floor((a + b) / 2) + 1
     remainingSpace.append(maxHeight - item)
     bins += 1
@@ -133,7 +133,7 @@ def read_text(fpath, x):
         resultBestFit = bestFit(maxHeight, dataInt)
         resultWorstFit = worstFit(maxHeight, dataInt)
         print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
-        return [resultFirstFit, resultBestFit, resultWorstFit] #egy listába rakja
+        return [resultFirstFit, resultBestFit, resultWorstFit]
 
 def readOptimal(fpath):
     with open(fpath, 'r') as f:
@@ -169,9 +169,25 @@ def readDirectory(x):
             fpath = f"{path}\{file}"
             readOptimal(fpath)
 
-    plt.plot(firstFitList)
-    plt.plot(bestFitList)
-    plt.plot(worstFitList)
+    fig, ax = plt.subplots()
+
+    ax.plot(firstFitList,  'g')
+    ax.set_title('First-Fit algorithm')
+    plt.show()
+
+    fig, ax = plt.subplots()
+    ax.plot(bestFitList,  'r--')
+    ax.set_title('Best algorithm')
+    plt.show()
+
+    fig, ax = plt.subplots()
+    ax.plot(worstFitList, 'b.')
+    ax.set_title('Worst-Fit algorithm')
+    plt.show()
+
+    fig, ax = plt.subplots()
+    ax.plot(firstFitList, 'g', bestFitList, 'r--', worstFitList, 'b.')
+    ax.set_title('Summarized')
     plt.show()
 
 for x in np.linspace(1,3,3):
