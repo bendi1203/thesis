@@ -58,8 +58,10 @@ def firstFit(maxHeight, data):
     remainingSpace.append(maxHeight)
     for i in range(len(data)):
         usedBins = firstFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
-
-    return usedBins
+    if remainingSpace[-1] == maxHeight:
+        return usedBins
+    else:
+        return usedBins + 1
 
 def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
     a = 0
@@ -92,8 +94,11 @@ def bestFit(maxHeight, data):
     remainingSpace.append(maxHeight)
     for i in range(len(data)):
         usedBins = bestFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
+    if remainingSpace[-1] == maxHeight:
+        return usedBins
+    else:
+        return usedBins + 1
 
-    return usedBins
 
 def worstFitForOneItem(bins, remainingSpace, item, maxHeight):
     if remainingSpace[len(remainingSpace) - 1] - item > 0:
@@ -116,8 +121,10 @@ def worstFit(maxHeight, data):
     remainingSpace.append(maxHeight)
     for i in range(len(data)):
         usedBins = worstFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
-
-    return usedBins
+    if remainingSpace[-1] == maxHeight:
+        return usedBins
+    else:
+        return usedBins + 1
 
 def read_text(fpath, x):
     i = 0
@@ -169,7 +176,7 @@ def readDirectory(x):
             fpath = f"{path}\{file}"
             readOptimal(fpath)
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots() # vonalvastagságot csökkenteni
 
     ax.plot(firstFitList,  'g')
     ax.set_title('First-Fit algorithm')
