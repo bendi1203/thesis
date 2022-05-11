@@ -5,7 +5,7 @@ import math
 
 from matplotlib import pyplot as plt
 
-path = r"D:\Thesis\thesis\input_bison"  # nem működik input_bison-nal
+path = r"D:\Thesis\thesis\input_bison"
 os.chdir(path)
 
 def overload(c):
@@ -34,34 +34,25 @@ def binary(remainingSpace, toInsert):
     remainingSpace.insert(a, toInsert)
 
 def firstFitForOneItem(bins, remainingSpace, item, maxHeight):
-    a = 0
-    b = len(remainingSpace) - 1
-    while a <= b:
-        if remainingSpace[math.floor((a + b) / 2)] >= item:
-            toInsert = remainingSpace[math.floor((a + b) / 2)] - item
-            del remainingSpace[math.floor((a + b) / 2)]
-            binary(remainingSpace, toInsert)
-            return bins
-        else:
-            a = math.floor((a + b) / 2) + 1
-    remainingSpace.append(maxHeight - item)
-    bins += 1
-    toInsert = remainingSpace[len(remainingSpace) - 1]
-    del remainingSpace[len(remainingSpace) - 1]
-    binary(remainingSpace, toInsert)
+    j = 0
+    while j < bins:
+        if remainingSpace[j] >= item:
+            remainingSpace[j] -= item
+            break
+        j += 1
+    if j == bins:
+        remainingSpace.append(maxHeight - item)
+        bins += 1
     return bins
+
 
 def firstFit(maxHeight, data):
     usedBins = 1
     remainingSpace = []
     remainingSpace.append(maxHeight)
-    remainingSpace.append(maxHeight)
     for i in range(len(data)):
         usedBins = firstFitForOneItem(usedBins, remainingSpace, data[i], maxHeight)
-    if remainingSpace[-1] == maxHeight:
-        return usedBins
-    else:
-        return usedBins + 1
+    return usedBins
 
 def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
     a = 0
@@ -125,6 +116,8 @@ def worstFit(maxHeight, data):
         return usedBins
     else:
         return usedBins + 1
+        print('ub ->>>>> ', usedBins)
+        #kivettem a usedBins + 1 -et mivel így egyek több ládát adott vissza az overload első elágazására
 
 def read_text(fpath, x):
     i = 0
@@ -160,6 +153,9 @@ def readOptimal(fpath):
             optimalsInt.append(int(optimals[i]))
         return optimalsInt
 
+def average(list):
+    return sum(list)/len(list)
+
 def readDirectory(x):
     firstFitList = []
     bestFitList = []
@@ -174,9 +170,32 @@ def readDirectory(x):
 
         elif file.endswith('.csv'):
             fpath = f"{path}\{file}"
-            readOptimal(fpath)
+            optimal = readOptimal(fpath)
+
+    avgOfFirstFit = average(firstFitList)
+    avgOfBestFit = average(bestFitList)
+    avgOfWorstFit = average(worstFitList)
+    print('-------------------------------')
+    print('Maximum height of a bin: ', round(overload(x), 3))
+    print('-------------------------------')
+    print('Average of First-Fit:', round(avgOfFirstFit, 3))
+    print('Maximum item of First-Fit: ', max(firstFitList))
+    print('Minimum item of First-Fit: ', min(firstFitList))
+    print('-------------------------------')
+    print('Average of Best-Fit: ', round(avgOfBestFit, 3))
+    print('Maximum item of Best-Fit: ', max(bestFitList))
+    print('Minimum item of Best-Fit: ', min(bestFitList))
+    print('-------------------------------')
+    print('Average of Worst-Fit: ', round(avgOfWorstFit,3))
+    print('Maximum item of Worst-Fit: ', max(worstFitList))
+    print('Minimum item of Worst-Fit: ', min(worstFitList))
+
 
     fig, ax = plt.subplots() # vonalvastagságot csökkenteni
+
+    ax.plot(optimal,'y')
+    ax.set_title('Optimals')
+    plt.show()
 
     ax.plot(firstFitList,  'g')
     ax.set_title('First-Fit algorithm')
@@ -184,7 +203,7 @@ def readDirectory(x):
 
     fig, ax = plt.subplots()
     ax.plot(bestFitList,  'r--')
-    ax.set_title('Best algorithm')
+    ax.set_title('Best-Fit algorithm')
     plt.show()
 
     fig, ax = plt.subplots()
@@ -193,7 +212,7 @@ def readDirectory(x):
     plt.show()
 
     fig, ax = plt.subplots()
-    ax.plot(firstFitList, 'g', bestFitList, 'r--', worstFitList, 'b.')
+    ax.plot(firstFitList, 'g', bestFitList, 'r--', worstFitList, 'b.', optimal,'y')
     ax.set_title('Summarized')
     plt.show()
 
