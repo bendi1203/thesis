@@ -9,11 +9,11 @@ path = r"D:\Thesis\thesis\input_bison"
 os.chdir(path)
 
 def overload(c):
-    if (0 <= c) and (c <= 3 / 2):
+    if (0 <= c) and (c < 3 / 2):
         s = sys.maxsize - 2
         return s
 
-    elif (3 / 2 <= c) and (c <= 9 / 5):
+    elif (3 / 2 <= c) and (c < 9 / 5):
         s = 1 + (1 / c)
 
     elif (9 / 5 <= c) and (c <= 14 / 3):
@@ -115,9 +115,7 @@ def worstFit(maxHeight, data):
     if remainingSpace[-1] == maxHeight:
         return usedBins
     else:
-        return usedBins + 1
-        print('ub ->>>>> ', usedBins)
-        #kivettem a usedBins + 1 -et mivel így egyek több ládát adott vissza az overload első elágazására
+        return usedBins        #kivettem a usedBins + 1 -et mivel így egyek több ládát adott vissza az overload első elágazására
 
 def read_text(fpath, x):
     i = 0
@@ -175,7 +173,7 @@ def readDirectory(x):
     avgOfFirstFit = average(firstFitList)
     avgOfBestFit = average(bestFitList)
     avgOfWorstFit = average(worstFitList)
-    print('-------------------------------')
+    print('------------------------------- -----')
     print('Maximum height of a bin: ', round(overload(x), 3))
     print('-------------------------------')
     print('Average of First-Fit:', round(avgOfFirstFit, 3))
@@ -192,12 +190,12 @@ def readDirectory(x):
 
 
     fig, ax = plt.subplots() # vonalvastagságot csökkenteni
-
-    ax.plot(optimal,'y')
+    fig, ax.plot(optimal,'y')
     ax.set_title('Optimals')
     plt.show()
 
-    ax.plot(firstFitList,  'g')
+    fig, ax = plt.subplots()
+    fig, ax.plot(firstFitList,  'g')
     ax.set_title('First-Fit algorithm')
     plt.show()
 
@@ -216,6 +214,14 @@ def readDirectory(x):
     ax.set_title('Summarized')
     plt.show()
 
-for x in np.linspace(1,3,3):
-    readDirectory(x)
 
+for x in range(1, 5):
+    temp = x
+    if x == 2:
+        temp = 1.65
+        readDirectory(temp)
+    elif x == 4:
+        temp = 5
+        readDirectory(temp)
+    else:
+        readDirectory(temp)
