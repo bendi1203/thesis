@@ -1,6 +1,5 @@
 import sys
 import os
-import numpy as np
 import math
 
 from matplotlib import pyplot as plt
@@ -60,14 +59,14 @@ def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
     minIndex = -1
     min = sys.maxsize - 1
     while a <= b:  # elsőben a legkisebb maradék hely és a végén a legtöbb
-        if remainingSpace[math.floor((a + b) / 2)] >= item:
+        if remainingSpace[math.floor((a + b) / 2)] >= item: # bin.beszúrással megkeressük, hogy mibe fogjuk belerakni az elemet
             if min > remainingSpace[math.floor((a + b) / 2)] - item:
                 min = remainingSpace[math.floor((a + b) / 2)] - item
                 minIndex = math.floor((a + b) / 2)
             b = math.floor((a + b) / 2) - 1
-        else:  # második fele
+        else:
             a = math.floor((a + b) / 2) + 1
-    if minIndex != -1:
+    if minIndex != -1: # kivesszük az elemet és binary() megkeresi az új helyet
         del remainingSpace[minIndex]
         binary(remainingSpace, min)
     else:
@@ -92,17 +91,28 @@ def bestFit(maxHeight, data):
 
 
 def worstFitForOneItem(bins, remainingSpace, item, maxHeight):
-    if remainingSpace[len(remainingSpace) - 1] - item > 0:
-        toInsert = remainingSpace[len(remainingSpace) - 1] - item
-        del remainingSpace[len(remainingSpace) - 1]
-        binary(remainingSpace, toInsert)
+    if remainingSpace[len(remainingSpace) - 1] != maxHeight:
+        if remainingSpace[len(remainingSpace) - 1] - item > 0:
+            toInsert = remainingSpace[len(remainingSpace) - 1] - item
+            del remainingSpace[len(remainingSpace) - 1]
+            binary(remainingSpace, toInsert)
+        else:
+            remainingSpace.append(maxHeight - item)
+            bins += 1
+            toInsert = remainingSpace[len(remainingSpace) - 1]
+            del remainingSpace[len(remainingSpace) - 1]
+            binary(remainingSpace, toInsert)
     else:
-        remainingSpace.append(maxHeight - item)
-        bins += 1
-        toInsert = remainingSpace[len(remainingSpace) - 1]
-        del remainingSpace[len(remainingSpace) - 1]
-        binary(remainingSpace, toInsert)
-
+        if remainingSpace[len(remainingSpace) - 2] - item > 0:
+            toInsert = remainingSpace[len(remainingSpace) - 2] - item
+            del remainingSpace[len(remainingSpace) - 2]
+            binary(remainingSpace, toInsert)
+        else:
+            remainingSpace[len(remainingSpace) - 1] -= item
+            bins += 1
+            toInsert = remainingSpace[len(remainingSpace) - 1]
+            del remainingSpace[len(remainingSpace) - 1]
+            binary(remainingSpace, toInsert)
     return bins
 
 def worstFit(maxHeight, data):
@@ -115,7 +125,7 @@ def worstFit(maxHeight, data):
     if remainingSpace[-1] == maxHeight:
         return usedBins
     else:
-        return usedBins        #kivettem a usedBins + 1 -et mivel így egyek több ládát adott vissza az overload első elágazására
+        return usedBins + 1  #kivettem a usedBins + 1 -et mivel így egyek több ládát adott vissza az overload első elágazására
 
 def read_text(fpath, x):
     i = 0
@@ -143,7 +153,7 @@ def readOptimal(fpath):
             if(not line):
                 a = False
                 break
-            v = line.split(sep=";") #\t
+            v = line.split(sep=";")
             optimals.append(v[1])
             optimals.append(v[3])
             optimals.append(v[5])
@@ -173,44 +183,55 @@ def readDirectory(x):
     avgOfFirstFit = average(firstFitList)
     avgOfBestFit = average(bestFitList)
     avgOfWorstFit = average(worstFitList)
-    print('------------------------------- -----')
+
+    print('\n')
     print('Maximum height of a bin: ', round(overload(x), 3))
-    print('-------------------------------')
-    print('Average of First-Fit:', round(avgOfFirstFit, 3))
-    print('Maximum item of First-Fit: ', max(firstFitList))
-    print('Minimum item of First-Fit: ', min(firstFitList))
-    print('-------------------------------')
-    print('Average of Best-Fit: ', round(avgOfBestFit, 3))
-    print('Maximum item of Best-Fit: ', max(bestFitList))
-    print('Minimum item of Best-Fit: ', min(bestFitList))
-    print('-------------------------------')
-    print('Average of Worst-Fit: ', round(avgOfWorstFit,3))
-    print('Maximum item of Worst-Fit: ', max(worstFitList))
-    print('Minimum item of Worst-Fit: ', min(worstFitList))
+    print('-----------------------------------------')
+    print('FF:')
+    print('\tAverage bin usage of First-Fit:', round(avgOfFirstFit, 3))
+    print('\tAverage bin usage related to Best-Fit: ', (avgOfFirstFit/avgOfBestFit) * 100 - 100,'%')
+    print('\tAverage bin usage related to Worst-Fit: ', (avgOfFirstFit/avgOfWorstFit) * 100 - 100,'%')
+    print('\tMaximum item of First-Fit: ', max(firstFitList))
+    print('\tMinimum item of First-Fit: ', min(firstFitList))
+    print('-----------------------------------------')
+    print('BF:')
+    print('\tAverage bin usage of Best-Fit: ', round(avgOfBestFit, 3))
+    print('\tAverage bin usage related to First-Fit: ', (avgOfBestFit/avgOfFirstFit) * 100 - 100,'%')
+    print('\tAverage bin usage related to Worst-Fit: ', (avgOfBestFit/avgOfWorstFit) * 100 - 100,'%')
+    print('\tMaximum item of Best-Fit: ', max(bestFitList))
+    print('\tMinimum item of Best-Fit: ', min(bestFitList))
+    print('-----------------------------------------')
+    print('WF:')
+    print('\tAverage bin usage of Worst-Fit: ', round(avgOfWorstFit,3))
+    print('\tAverage bin usage related to First-Fit: ', (avgOfWorstFit/avgOfFirstFit) * 100 - 100,'%')
+    print('\tAverage bin usage related to Best-Fit: ', (avgOfWorstFit/avgOfBestFit) * 100 - 100,'%')
+    print('\tMaximum item of Worst-Fit: ', max(worstFitList))
+    print('\tMinimum item of Worst-Fit: ', min(worstFitList))
+    print('\n')
 
 
-    fig, ax = plt.subplots() # vonalvastagságot csökkenteni
-    fig, ax.plot(optimal,'y')
+    fig, ax = plt.subplots()
+    fig, ax.plot(optimal,'y', linewidth=0.5)
     ax.set_title('Optimals')
     plt.show()
 
     fig, ax = plt.subplots()
-    fig, ax.plot(firstFitList,  'g')
+    fig, ax.plot(firstFitList,  'g', linewidth=0.5)
     ax.set_title('First-Fit algorithm')
     plt.show()
 
     fig, ax = plt.subplots()
-    ax.plot(bestFitList,  'r--')
+    ax.plot(bestFitList,  'r--', linewidth=0.5)
     ax.set_title('Best-Fit algorithm')
     plt.show()
 
     fig, ax = plt.subplots()
-    ax.plot(worstFitList, 'b.')
+    ax.plot(worstFitList, 'b-', linewidth=0.5)
     ax.set_title('Worst-Fit algorithm')
     plt.show()
 
     fig, ax = plt.subplots()
-    ax.plot(firstFitList, 'g', bestFitList, 'r--', worstFitList, 'b.', optimal,'y')
+    ax.plot(firstFitList, 'g',  bestFitList, 'r--', worstFitList, 'b-', optimal,'y', linewidth=0.5)
     ax.set_title('Summarized')
     plt.show()
 
