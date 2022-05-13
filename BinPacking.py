@@ -125,7 +125,7 @@ def worstFit(maxHeight, data):
     if remainingSpace[-1] == maxHeight:
         return usedBins
     else:
-        return usedBins + 1  #kivettem a usedBins + 1 -et mivel így egyek több ládát adott vissza az overload első elágazására
+        return usedBins + 1
 
 def read_text(fpath, x):
     i = 0
@@ -140,7 +140,7 @@ def read_text(fpath, x):
         resultFirstFit = firstFit(maxHeight, dataInt)
         resultBestFit = bestFit(maxHeight, dataInt)
         resultWorstFit = worstFit(maxHeight, dataInt)
-        print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
+        # print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
         return [resultFirstFit, resultBestFit, resultWorstFit]
 
 def readOptimal(fpath):
@@ -234,6 +234,7 @@ def readDirectory(x):
     ax.plot(firstFitList, 'g',  bestFitList, 'r--', worstFitList, 'b-', optimal,'y', linewidth=0.5)
     ax.set_title('Summarized')
     plt.show()
+    print('i printed sum')
 
 
 for x in range(1, 5):
