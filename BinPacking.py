@@ -55,18 +55,18 @@ def firstFit(maxHeight, data):
 
 def bestFitForOneItem(bins, remainingSpace, item, maxHeight):
     a = 0
-    b = len(remainingSpace) - 1  # utolsó eleme a listának
+    b = len(remainingSpace) - 1
     minIndex = -1
     min = sys.maxsize - 1
-    while a <= b:  # elsőben a legkisebb maradék hely és a végén a legtöbb
-        if remainingSpace[math.floor((a + b) / 2)] >= item: # bin.beszúrással megkeressük, hogy mibe fogjuk belerakni az elemet
+    while a <= b:
+        if remainingSpace[math.floor((a + b) / 2)] >= item:
             if min > remainingSpace[math.floor((a + b) / 2)] - item:
                 min = remainingSpace[math.floor((a + b) / 2)] - item
                 minIndex = math.floor((a + b) / 2)
             b = math.floor((a + b) / 2) - 1
         else:
             a = math.floor((a + b) / 2) + 1
-    if minIndex != -1: # kivesszük az elemet és binary() megkeresi az új helyet
+    if minIndex != -1:
         del remainingSpace[minIndex]
         binary(remainingSpace, min)
     else:
@@ -211,26 +211,36 @@ def readDirectory(x):
     fig, ax = plt.subplots()
     fig, ax.plot(optimal,'y', linewidth=0.5)
     ax.set_title('Optimals')
+    plt.xlabel("Number of input files")
+    plt.ylabel("Number of used bins")
     plt.show()
 
     fig, ax = plt.subplots()
     fig, ax.plot(firstFitList,  'g', linewidth=0.5)
     ax.set_title('First-Fit algorithm')
+    plt.xlabel("Number of input files")
+    plt.ylabel("Number of used bins")
     plt.show()
 
     fig, ax = plt.subplots()
     ax.plot(bestFitList,  'r--', linewidth=0.5)
     ax.set_title('Best-Fit algorithm')
+    plt.xlabel("Number of input files")
+    plt.ylabel("Number of used bins")
     plt.show()
 
     fig, ax = plt.subplots()
     ax.plot(worstFitList, 'b-', linewidth=0.5)
     ax.set_title('Worst-Fit algorithm')
+    plt.xlabel("Number of input files")
+    plt.ylabel("Number of used bins")
     plt.show()
 
     fig, ax = plt.subplots()
     ax.plot(firstFitList, 'g',  bestFitList, 'r--', worstFitList, 'b-', optimal,'y', linewidth=0.5)
     ax.set_title('Summarized')
+    plt.xlabel("Number of input files")
+    plt.ylabel("Number of used bins")
     plt.show()
 
 
