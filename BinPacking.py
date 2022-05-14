@@ -4,7 +4,7 @@ import math
 
 from matplotlib import pyplot as plt
 
-path = r"D:\Thesis\thesis\input_bison"
+path = r"input_bison"
 os.chdir(path)
 
 def overload(c):
@@ -140,7 +140,7 @@ def read_text(fpath, x):
         resultFirstFit = firstFit(maxHeight, dataInt)
         resultBestFit = bestFit(maxHeight, dataInt)
         resultWorstFit = worstFit(maxHeight, dataInt)
-        # print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
+        print(resultFirstFit,' - ',resultBestFit, ' - ', resultWorstFit)
         return [resultFirstFit, resultBestFit, resultWorstFit]
 
 def readOptimal(fpath):
@@ -170,15 +170,13 @@ def readDirectory(x):
     worstFitList = []
     for file in os.listdir():
         if file.endswith('.BPP'):
-            fpath = f"{path}\{file}"
-            data = read_text(fpath, x)
+            data = read_text(file, x)
             firstFitList.append(data[0])
             bestFitList.append(data[1])
             worstFitList.append(data[2])
 
         elif file.endswith('.csv'):
-            fpath = f"{path}\{file}"
-            optimal = readOptimal(fpath)
+            optimal = readOptimal(file)
 
     avgOfFirstFit = average(firstFitList)
     avgOfBestFit = average(bestFitList)
@@ -234,7 +232,6 @@ def readDirectory(x):
     ax.plot(firstFitList, 'g',  bestFitList, 'r--', worstFitList, 'b-', optimal,'y', linewidth=0.5)
     ax.set_title('Summarized')
     plt.show()
-    print('i printed sum')
 
 
 for x in range(1, 5):
